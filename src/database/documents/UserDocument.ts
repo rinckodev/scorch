@@ -1,18 +1,8 @@
-interface UserPostSchema {
-    title: string;
-    description: string;
-    createdAt: Date;
-    tags: string[]
+interface UserWallet {
+    coins?: number
 }
 
-interface UserDocumentSchema {
-    username: string;
-    displayName?: string;
-    wallet?: {
-        coins: number;
-        credits: number;
-    }
-    posts?: UserPostSchema[]
+export interface UserDocument {
+    username: string
+    wallet?: UserWallet
 }
-
-export type UserDocument = UserDocumentSchema
