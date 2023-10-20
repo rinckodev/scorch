@@ -15,7 +15,14 @@ interface GuildGlobal {
     },
 }
 
+interface GuildStaff {
+    application: {
+        channel: string;
+    }
+}
+
 export interface GuildDocument {
     logs?: GuildLogs,
     global?: GuildGlobal
+    staff?: GuildStaff
 }

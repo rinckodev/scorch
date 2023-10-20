@@ -1,7 +1,8 @@
 import { db } from "@/database";
 import { Command, Component } from "@/discord/base";
-import { brBuilder, createModalInput, hexToRgb } from "@magicyan/discord";
-import { ApplicationCommandType, ApplicationCommandOptionType, ChannelType, EmbedBuilder, codeBlock, TextInputStyle, Collection } from "discord.js";
+import { settings } from "@/settings";
+import { brBuilder, createModalInput, createRow, hexToRgb } from "@magicyan/discord";
+import { ApplicationCommandType, ApplicationCommandOptionType, ChannelType, EmbedBuilder, codeBlock, TextInputStyle, Collection, ButtonBuilder, ButtonStyle } from "discord.js";
 
 const globalActionData: Collection<string, "join" | "leave"> = new Collection();
 
@@ -106,7 +107,42 @@ new Command({
                     ],
                 }
             ],
-        }
+        },
+        {
+            name: "aplicação-equipe",
+            description: "Configurar sistema de aplicação para a equipe",
+            type: ApplicationCommandOptionType.SubcommandGroup,
+            options: [
+                {
+                    name: "canal",
+                    description: "Canal onde os formulário serão enviados",
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: "canal",
+                            description: "Selecione o canal",
+                            type: ApplicationCommandOptionType.Channel,
+                            channelTypes: [ChannelType.GuildText],
+                            required
+                        }
+                    ],
+                },
+                {
+                    name: "setup",
+                    description: "Envia o painel de aplicação para a equipe",
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: "canal",
+                            description: "Selecione o canal",
+                            type: ApplicationCommandOptionType.Channel,
+                            channelTypes: [ChannelType.GuildText],
+                            required
+                        }
+                    ],
+                },
+            ],
+        },
     ],
     async run(interaction){
         const { options, guild, member } = interaction;
@@ -211,6 +247,60 @@ new Command({
                             content: `O canal padrão do sistema de logs agora é o ${channel}!`
                         });
                         return;
+                    }
+                }
+                return;
+            }
+            case "aplicação-equipe":{
+                switch(subCommand){
+                    case "canal":{
+                        const channel = options.getChannel("canal", true);
+
+                        await db.upset(db.guilds, guild.id, {
+                            staff: { application: { channel: channel.id } },
+                        });
+
+                        interaction.editReply({
+                            content: `O canal de formulários de aplicação para a equipe agora é o ${channel}!`
+                        });
+                        return;
+                    }
+                    case "setup":{
+                        const channel = options.getChannel("canal", true, [ChannelType.GuildText]);
+
+                        const embed = new EmbedBuilder({
+                            title: "Aplicação para a equipe",
+                            color: hexToRgb(settings.colors.theme.primary),
+                            description: brBuilder(
+                                "Clique no botão abaixo para iniciar o",
+                                "formulário de aplicação para a equipe",
+                                "do nosso servidor!",
+                                "",
+                                "Após isso, nossa equipe estará analizando",
+                                "e retornando uma resposta assim que possível!"
+                            )
+                        });
+
+                        const row = createRow(
+                            new ButtonBuilder({
+                                customId: "staff-form-start-button",
+                                label: "Aplicar",
+                                style: ButtonStyle.Primary,
+                                emoji: "✋"
+                            })
+                        );
+
+                        channel.send({embeds: [embed], components: [row]})
+                        .then(message => {
+                            interaction.editReply({
+                                content: `Mensagem enviada com sucesso! ${message.url}`
+                            });
+                        })
+                        .catch(err => {
+                            interaction.reply({
+                                content: `Não foi possível enviar a mensagem ${codeBlock("bash", err)}`
+                            });
+                        });
                     }
                 }
                 return;
