@@ -1,5 +1,6 @@
 import { db } from "@/database";
 import { Command, Component } from "@/discord/base";
+import { reply } from "@/functions";
 import { settings } from "@/settings";
 import { brBuilder, createModalInput, createRow, hexToRgb } from "@magicyan/discord";
 import { ApplicationCommandType, ApplicationCommandOptionType, ChannelType, EmbedBuilder, codeBlock, TextInputStyle, Collection, ButtonBuilder, ButtonStyle } from "discord.js";
@@ -164,9 +165,10 @@ new Command({
                             global: { channel: channel.id },
                         });
 
-                        interaction.editReply({
-                            content: `O canal padrão do sistema global agora é o ${channel}!`
-                        });
+                        reply.success({ interaction, update: true, text: `O canal padrão do sistema global agora é o ${channel}!` });
+                        // interaction.editReply({
+                        //     content: `O canal padrão do sistema global agora é o ${channel}!`
+                        // });
                         return;
                     }
                     case "cargo":{
@@ -317,12 +319,10 @@ new Component({
 
         const action = globalActionData.get(member.id);
         if (!action){
-            interaction.reply({ ephemeral,
-                content: brBuilder(
-                    "Não foi possível achar os dados iniciais!",
-                    "Utilize o comando novamente."
-                )
-            });
+            reply.danger({ interaction, text: brBuilder(
+                "Não foi possível achar os dados iniciais!",
+                "Utilize o comando novamente."
+            ) });
             return;
         }
         await interaction.deferReply({ ephemeral });
@@ -335,8 +335,6 @@ new Component({
 
         const text = action === "join" ? "entrada" : "saída";
 
-        interaction.editReply({
-            content: `A mensagem de ${text} do sistema global foi alterada!`
-        });
+        reply.success({ interaction, update: true, text: `A mensagem de ${text} do sistema global foi alterada!` });
     },
 });
