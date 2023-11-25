@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@magicyan/discord": "^1.0.5",
+    "@napi-rs/canvas": "^0.1.44",
     "chalk": "^4.1.2",
     "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",

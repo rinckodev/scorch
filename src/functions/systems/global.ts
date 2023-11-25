@@ -1,7 +1,9 @@
 import { db } from "@/database";
 import { settings } from "@/settings";
 import { brBuilder, createEmbedAuthor, hexToRgb, textReplacer } from "@magicyan/discord";
-import { ChannelType, EmbedBuilder, GuildMember, PartialGuildMember, TimestampStyles, time, userMention } from "discord.js";
+import { Canvas, loadImage } from "@napi-rs/canvas";
+import { AttachmentBuilder, ChannelType, EmbedBuilder, GuildMember, PartialGuildMember, TimestampStyles, time, userMention } from "discord.js";
+import { join } from "node:path";
 
 interface GlobalMessageJoinProps {
     member: GuildMember,
@@ -13,19 +15,8 @@ interface GlobalMessageLeaveProps {
 }
 type GlobalMessageProps = GlobalMessageJoinProps | GlobalMessageLeaveProps
 
-const defaults = {
-    messages: {
-        join: "${member} acabou de entrar no servidor!",
-        leave: "${member} acabou de sair do servidor!"
-    },
-    colors: {
-        join: settings.colors.theme.success,
-        leave: settings.colors.theme.danger,
-    }
-};
-
 export async function globalMessage({ member, action }: GlobalMessageProps){
-    const { guild, user } = member;
+    const { guild } = member;
 
     const guildData = await db.get(db.guilds, guild.id);
     if (!guildData) return;
@@ -33,30 +24,58 @@ export async function globalMessage({ member, action }: GlobalMessageProps){
     const channel = guild.channels.cache.get(guildData.global?.channel || "");
     if (channel?.type !== ChannelType.GuildText) return;
     
-    const color = guildData.global?.colors?.[action] || defaults.colors[action];
-    const text = guildData.global?.messages?.[action] || defaults.messages[action];
+    const canvas = new Canvas(800, 200);
+    const context = canvas.getContext("2d");
 
-    const description = brBuilder(
-        textReplacer(text, {
-            "${member}": userMention(member.id),
-            "${member.displayName}": member.displayName,
-            "${member.user.username}": member.user.username,
-            "${member.user.globalName}": member.user.globalName,
-            "${member.id}": member.id,
-            "${guild.name}": guild.name,
-            "${guild.id}": guild.id,
-            "${guild.membersCount}": guild.memberCount,
-        }),
-        time(new Date(), TimestampStyles.ShortDateTime)
-    );
+    const background = await loadImage(join(__rootname, "assets/images/backgrounds/01.png"));
 
-    const suffix = (action == "join") ? " entrou no servidor!" : " saiu do servidor!";
+    context.filter = "blur(4px)";
+    context.drawImage(background, 0, 0);
+    
+    context.filter = "opacity(15%)";
+    context.fillStyle = action == "join" ? "#04D600" : "#D60000";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    
+    context.filter = "opacity(30%)";
+    context.fillStyle = "#000000";
+    context.save();
+    context.roundRect(10, 10, canvas.width - 20, canvas.height - 20, 14);
+    context.fill();
+    context.restore();
 
-    const embed = new EmbedBuilder({
-        author: createEmbedAuthor({ user, suffix }),
-        description, thumbnail: { url: member.displayAvatarURL() },
-        color: hexToRgb(color),
-    });
+    context.filter = "none";
 
-    channel.send({ embeds: [embed] });
+    const avatar = await loadImage(member.displayAvatarURL({ size: 256 }));
+
+    context.save();
+    context.beginPath();
+    context.arc(39 + 74, 26 + 74, 148/2, 0, Math.PI * 2);
+    context.clip();
+    context.drawImage(avatar, 39, 26, 148, 148);
+    context.restore();
+
+    const actionIconPath = join(__rootname, `assets/icons/${action == "join" ? "plus" : "minus"}.svg`);
+    const actionIcon = await loadImage(actionIconPath);
+    context.drawImage(actionIcon, 234, 53);
+
+    const actionText = action == "join" ? "Entrou no servidor" : "Saiu do servidor";
+
+    context.fillStyle = "#FFFFFF";
+    context.font = "medium 32px Montserrat";
+    context.textBaseline = "middle";
+    context.fillText(actionText, 237, 116);
+    
+    const { displayName } = member;
+    let fontSize = 60;
+    do {
+        context.font = `bold ${--fontSize}px Montserrat`;
+    } while(context.measureText(displayName).width > canvas.width - 300);
+
+    context.fillText(displayName, 284, 73);
+
+
+    const buffer = await canvas.encode("png");
+    const attachment = new AttachmentBuilder(buffer, { name: "image.png" });
+
+    channel.send({ files: [attachment] });
 }
