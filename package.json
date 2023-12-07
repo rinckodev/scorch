@@ -13,27 +13,26 @@
   ],
   "license": "ISC",
   "devDependencies": {
-    "@types/signale": "^1.4.5",
-    "@typescript-eslint/eslint-plugin": "^6.7.4",
-    "@typescript-eslint/parser": "^6.7.4",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
     "sucrase": "^3.34.0",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "tscpaths": "^0.0.9",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.2"
   },
   "dependencies": {
-    "@magicyan/discord": "^1.0.5",
-    "@napi-rs/canvas": "^0.1.44",
+    "@magicyan/discord": "^1.0.10",
     "chalk": "^4.1.2",
-    "discord.js": "^14.13.0",
+    "consola": "^3.2.3",
+    "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",
-    "eslint": "^8.50.0",
-    "firebase-admin": "^11.11.0",
+    "eslint": "^8.55.0",
+    "firebase-admin": "^11.11.1",
     "glob": "^10.3.10",
-    "signale": "^1.4.0",
-    "starlightskinapi": "^1.0.5",
     "tslib": "^2.6.2",
-    "typesaurus": "^7.2.0"
+    "typesaurus": "^7.2.0",
+    "@napi-rs/canvas": "^0.1.44",
+    "starlightskinapi": "^1.0.5"
   }
 }

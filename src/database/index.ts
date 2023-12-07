@@ -9,9 +9,7 @@ firebase.initializeApp({ credential: credential.cert(firebaseAccount)});
 
 const db = {
     users: typesaurs.collection<UserDocument>("users"),
-    usersKeys: typesaurs.collection<Required<UserDocument>>("users"),
     guilds: typesaurs.collection<GuildDocument>("guilds"),
-    guildsKeys: typesaurs.collection<Required<GuildDocument>>("guilds"),
     ...typesaurs,
     async get<Model>(collection: typesaurs.Collection<Model>, id: string){
         return (await typesaurs.get<Model>(collection, id))?.data;

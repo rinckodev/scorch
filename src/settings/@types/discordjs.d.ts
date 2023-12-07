@@ -1,6 +1,11 @@
-declare module "discord.js" {
+import { Client } from "discord.js";
+
+export declare module "discord.js" {
     interface Client {
-        start(): void,
+        start(options?: ClientStartOptions): void,
     }
 }
-export {};
+
+interface ClientStartOptions {
+    whenReady?(client: Client<true>): void
+}

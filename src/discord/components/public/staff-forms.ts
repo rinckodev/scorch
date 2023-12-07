@@ -1,13 +1,12 @@
 import { db, getRegister } from "@/database";
-import { Component } from "@/discord/base";
+import { Component, Modal } from "@/discord/base";
 import { settings } from "@/settings";
 import { brBuilder, createModalInput, createRow, hexToRgb, toNull } from "@magicyan/discord";
-import { ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, TextInputStyle, User, codeBlock, time } from "discord.js";
-import { firestore } from "firebase-admin";
+import { ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, ComponentType, EmbedBuilder, TextInputStyle, User, codeBlock, time } from "discord.js";
 
 new Component({
     customId: "staff-form-start-button",
-    type: "Button", cache: "cached",
+    type: ComponentType.Button, cache: "cached",
     async run(interaction) {
         const { guild, user } = interaction;
 
@@ -64,9 +63,9 @@ new Component({
     },
 });
 
-new Component({
+new Modal({
     customId: "staff-form-modal",
-    type: "Modal", cache: "cached",
+    cache: "cached",
     async run(interaction) {
         const { member, fields, guild } = interaction;
 
@@ -139,7 +138,7 @@ new Component({
 
 new Component({
     customId: "staff-application-approve",
-    type: "Button", cache: "cached",
+    type: ComponentType.Button, cache: "cached",
     async run(interaction) {
         handleStaffApplication({ interaction, action: "approve" });
     },
@@ -147,7 +146,7 @@ new Component({
 
 new Component({
     customId: "staff-application-reject",
-    type: "Button", cache: "cached",
+    type: ComponentType.Button, cache: "cached",
     async run(interaction) {
         handleStaffApplication({ interaction, action: "reject" });
     },

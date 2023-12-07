@@ -4,7 +4,6 @@ dist
 .env
 .env.development
 
-*archive
 *deprecated
 *.exe
 *.config

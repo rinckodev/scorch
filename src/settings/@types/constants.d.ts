@@ -1,4 +1,4 @@
-declare global {
+export declare global {
     var animated: true;
     var fetchReply: true;
     var ephemeral: true;
@@ -9,6 +9,5 @@ declare global {
     var components: [];
     var embeds: [];
     var __rootname: string;
+    var rootTo: (...path: string[]) => string;
 }
-
-export {};
