@@ -23,3 +23,4 @@ export * from "./documents/UserDocument";
 export * from "./documents/GuildDocument";
 
 export * from "./functions/register";
+export * from "./functions/economy";

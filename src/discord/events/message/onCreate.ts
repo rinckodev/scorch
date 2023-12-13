@@ -1,5 +1,5 @@
 import { Event } from "@/discord/base";
-import { registerNewMember } from "@/functions";
+import { registerNewMember, economyChat } from "@/functions";
 
 new Event({
     name: "messageCreate",
@@ -7,5 +7,7 @@ new Event({
         const { member } = message;
 
         if (member) registerNewMember(member);
+
+        economyChat.messageCreate(message);
     },
 });

@@ -1,6 +1,7 @@
 export * from "./systems/logs";
 export * from "./systems/register";
 export * from "./systems/global";
+export * from "./systems/economy";
 
 export * from "./data/minecraft";
 

@@ -11,3 +11,5 @@ dist
 *.sqlite
 *firebase.json
 *firebase.development.json
+
+archive
