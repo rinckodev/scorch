@@ -8,3 +8,5 @@ export * from "./data/minecraft";
 export * from "./discord/reply";
 
 export * from "./security/anti-flood-call";
+
+export * from "./menus/wallet";

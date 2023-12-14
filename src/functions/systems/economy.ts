@@ -8,6 +8,8 @@ export const economyChat = {
     messageCreate(message: Message){
         const { author: user } = message;
 
+        if (user.bot) return;
+
         if (usersInCooldown.has(user.id)) return;
 
         const randomCoins = randomNumber(2, 10);
@@ -19,7 +21,7 @@ export const economyChat = {
     messageDelete(message: Message | PartialMessage){
         const { author: user } = message;
 
-        if (!user) return;
+        if (!user || user.bot) return;
     
         manageCoins(user, 10, "remove");
     }
