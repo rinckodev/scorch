@@ -1,5 +1,5 @@
 import { ApplicationCommandType, AutocompleteInteraction, Client, ClientOptions, CommandInteraction, MessageComponentInteraction, ModalSubmitInteraction, Partials, version } from "discord.js";
-import { CustomItents, brBuilder } from "@magicyan/discord";
+import { CustomItents, brBuilder, sleep } from "@magicyan/discord";
 import { Command, Component, Event, Modal } from "./";
 import { log } from "@/settings";
 import { glob } from "glob";
@@ -76,21 +76,16 @@ function onAutoComplete(interaction: AutocompleteInteraction){
     command.autoComplete(interaction as any);
 }
 function onComponent(interaction: MessageComponentInteraction){
-    const component = Component.get(interaction.customId, interaction.componentType)
-    ?? Component.logical.find(c => c.customId(interaction.customId));
-    
+    const component = Component.get(interaction.customId, interaction.componentType);
     if (component) {
         component.run(interaction as any);
         return;
     }
-    log.warn(`Missing function to ${interaction.customId} component`);
 }
 function onModal(interaction: ModalSubmitInteraction){
-    const modal = Modal.get(interaction.customId)
-    ?? Modal.logical.find(c => c.customId(interaction.customId));
+    const modal = Modal.get(interaction.customId);
     if (modal) {
         modal.run(interaction);
         return;
     }
-    log.warn(`Missing function to ${interaction.customId} modal`);
 }
