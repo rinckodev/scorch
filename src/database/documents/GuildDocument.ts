@@ -21,8 +21,15 @@ interface GuildStaff {
     }
 }
 
+interface GuildChannels {
+    logs?: { id: string };
+    audit?: { id: string };
+    global?: { id: string }
+}
+
 export interface GuildDocument {
     logs?: GuildLogs,
     global?: GuildGlobal
-    staff?: GuildStaff
+    staff?: GuildStaff;
+    channels?: GuildChannels;
 }
