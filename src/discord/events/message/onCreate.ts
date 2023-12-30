@@ -1,5 +1,5 @@
 import { Event } from "@/discord/base";
-import { registerNewMember, economyChat } from "@/functions";
+import { registerNewMember, economyChat, levelling } from "@/functions";
 
 new Event({
     name: "messageCreate",
@@ -8,6 +8,7 @@ new Event({
 
         if (member) registerNewMember(member);
 
+        levelling.onMessage(message);
         economyChat.messageCreate(message);
     },
 });

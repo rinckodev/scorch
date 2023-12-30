@@ -1,7 +1,7 @@
 import { db, getRegister } from "@/database";
 import { Command } from "@/discord/base";
-import { reply } from "@/functions";
-import { ApplicationCommandOptionType, ApplicationCommandType } from "discord.js";
+import { levelling, reply } from "@/functions";
+import { ApplicationCommandOptionType, ApplicationCommandType, GuildMember } from "discord.js";
 
 new Command({
     name: "admin",
@@ -35,6 +35,36 @@ new Command({
                 {
                     name: "quantidade",
                     description: "Especifique a quantidade de moedas",
+                    type: ApplicationCommandOptionType.Number,
+                    minValue: 1,
+                    required,
+                }
+            ]
+        },
+        {
+            name: "xp",
+            description: "Alterar xp de um usuário",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "usuário",
+                    description: "Selecione o usuário que deseja alterar o xp",
+                    type: ApplicationCommandOptionType.User,
+                    required,
+                },
+                {
+                    name: "ação",
+                    description: "Selecione a ação que deseja fazer",
+                    type: ApplicationCommandOptionType.String,
+                    choices: [
+                        { name: "+ Adicionar", value: "add" },
+                        { name: "- Remover", value: "remove" },
+                    ],
+                    required,
+                },
+                {
+                    name: "quantidade",
+                    description: "Especifique a quantidade de xp",
                     type: ApplicationCommandOptionType.Number,
                     minValue: 1,
                     required,
@@ -100,6 +130,41 @@ new Command({
 
                 reply.success({ interaction, update: true,
                     text: `Foram ${texts[action][0]} ${amount} moedas ${texts[action][1]} ${mention}`
+                });
+                return;
+            }
+            case "xp":{
+                await interaction.deferReply({ ephemeral });
+
+                const mention = options.getMember("usuário") as GuildMember;
+                const action = options.getString("ação", true) as "add" | "remove";
+                const amount = options.getNumber("quantidade", true);
+
+                if (mention.user.bot){
+                    reply.danger({ interaction, update: true,
+                        text: "Não é possível alterar xp de um usuário bot!"
+                    });
+                    return;
+                }
+                
+                switch(action){
+                    case "add":{
+                        levelling.giveXp(mention, amount);
+                        break;
+                    }
+                    case "remove":{
+                        levelling.removeXp(mention, amount);
+                        break;
+                    }
+                }
+
+                const texts = {
+                    add: ["adicionados", "para"],
+                    remove: ["removidos", "de"],
+                };
+
+                reply.success({ interaction, update: true,
+                    text: `Foram ${texts[action][0]} ${amount} de xp ${texts[action][1]} ${mention}`
                 });
                 return;
             }
