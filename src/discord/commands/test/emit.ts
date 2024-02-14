@@ -56,7 +56,7 @@ export default new Command({
                 client.emit("guildMemberRemove", mention);
 
                 interaction.reply({ ephemeral: true,
-                    content: "$guildMemberRemove event emited"
+                    content: "guildMemberRemove event emited"
                 });
                 return;
             }
