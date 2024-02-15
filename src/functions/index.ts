@@ -3,6 +3,7 @@ export * from "./systems/register";
 export * from "./systems/global";
 export * from "./systems/economy";
 export * from "./systems/levelling";
+export * from "./systems/pagination";
 
 export * from "./data/minecraft";
 
